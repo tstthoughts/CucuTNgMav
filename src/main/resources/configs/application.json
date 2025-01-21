@@ -1,0 +1,28 @@
+[
+  {
+    "env": "Dev",
+    "ui": {
+      "homeURL": "https://example.com",
+      "login": {
+        "userName": "devUser",
+        "password": "devPassword"
+      }
+    },
+    "api": {
+      "baseURI": "https://reqres.in"
+    }
+  },
+  {
+    "env": "Prod",
+    "ui": {
+      "homeURL": "https://prod.example.com",
+      "login": {
+        "userName": "prodUser",
+        "password": "prodPassword"
+      }
+    },
+    "api": {
+      "baseURI": "https://api.prod.example.com"
+    }
+  }
+]

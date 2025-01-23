@@ -2,10 +2,14 @@ package steps;
 
 import global.Config;
 import global.Utilities;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.*;
 import org.openqa.selenium.WebDriver;
 import global.DriverManager;
 import runner.TestRunner;
+
+import java.util.List;
+import java.util.Map;
 
 public class StepDefinitions {
     WebDriver driver = DriverManager.getDriver();
@@ -39,6 +43,9 @@ public class StepDefinitions {
                 break;
             case "dashboard":
                 url = "https://example.com/dashboard";
+                break;
+            case "google":
+                url = "https://www.google.com/";
                 break;
             default:
                 throw new IllegalArgumentException("Invalid page name: " + pageName);
@@ -79,6 +86,20 @@ public class StepDefinitions {
         } catch (InterruptedException e) {
             System.err.println("Thread was interrupted during sleep: " + e.getMessage());
             Thread.currentThread().interrupt();
+        }
+    }
+
+    @When("I search for the following items:")
+    public void iSearchForTheFollowingItems(DataTable dataTable) {
+        // Convert DataTable to a List of Maps
+        List<Map<String, String>> items = dataTable.asMaps(String.class, String.class);
+
+        for (Map<String, String> item : items) {
+            String searchItem = item.get("Item");
+            String category = item.get("Category");
+
+            System.out.println("Searching for item: " + searchItem + " in category: " + category);
+            // Code to perform the search
         }
     }
 }

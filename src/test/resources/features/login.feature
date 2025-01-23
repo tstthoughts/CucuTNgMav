@@ -11,3 +11,14 @@ Feature: Login functionality
     When user handles the alert by "accept" with text ""
 
 #    Then user should be logged in successfully
+
+@datatable
+  Scenario: Validate search results for multiple inputs
+  Given user is on the "google" page
+    When I search for the following items:
+      | Item        | Category   |
+      | Laptop      | Electronics |
+      | Shirt       | Clothing    |
+      | Blender     | Kitchen     |
+#    Then I should see relevant search results for each item
+

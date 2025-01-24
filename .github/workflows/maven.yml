@@ -28,15 +28,23 @@ jobs:
         run: mvn -B package --file pom.xml
 
       - name: Run Tests with Debugging
+        env:
+          TMP_DIR: ${{ runner.temp }}
         run: |
           export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"
-          mvn clean test
+          mvn clean test \
+            -Dwebdriver.chrome.driver=/usr/bin/chromedriver \
+            -DchromeOptions.args="--no-sandbox --disable-dev-shm-usage --user-data-dir=${TMP_DIR}/chrome-session"
+
+      - name: Cleanup Chrome Processes
+        run: |
+          killall -9 chrome || true
+          killall -9 chromedriver || true
 
   test-chrome:
     runs-on: ubuntu-latest
     env:
       TEST_ENV: "Dev"  # Set env variable with static value
-    if: ${{ github.event.name == 'push' && github.ref == 'refs/heads/main' && github.event.repository.tags.*.name == 'v*' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -62,4 +70,6 @@ jobs:
             -DchromeOptions.args="--no-sandbox --disable-dev-shm-usage --user-data-dir=${TMP_DIR}/chrome-session"
 
       - name: Cleanup Chrome Processes
-        run: killall -9 chrome || true
+        run: |
+          killall -9 chrome || true
+          killall -9 chromedriver || true

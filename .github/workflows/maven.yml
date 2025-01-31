@@ -1,67 +1,60 @@
-name: Java CI with Maven
+name: Selenium Java Automation
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Environment to test (e.g., Dev, Staging, Prod)'
+      env:
+        description: 'Environment to run tests against (e.g., dev, staging, prod)'
         required: true
-        default: 'Dev'
-      tag:
-        description: 'Test tag to execute (e.g., regression, smoke)'
-        required: true
-        default: 'regression'
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
       browser:
-        description: 'Browser for test execution (e.g., chrome, firefox)'
+        description: 'Browser to run tests on (e.g., chrome, firefox)'
         required: true
         default: 'chrome'
+        type: choice
+        options:
+          - chrome
+          - firefox
+      tag:
+        description: 'Tag to filter tests (e.g., smoke, regression)'
+        required: true
+        default: 'smoke'
+        type: string
 
 jobs:
-  build:
+  run-tests:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 23
-        uses: actions/setup-java@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
         with:
           java-version: '23'
           distribution: 'temurin'
-          cache: maven
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
 
-      # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-      - name: Update dependency graph
-        uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
-
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 23
-        uses: actions/setup-java@v4
-        with:
-          java-version: '23'
-          distribution: 'temurin'
-          cache: maven
-
-      - name: Install Dependencies
-        run: sudo apt-get update && sudo apt-get install -y chromium-chromedriver
-
-      - name: Run Tests
-        env:
-          TEST_ENV: ${{ inputs.environment }}
-          TEST_TAG: ${{ inputs.tag }}
-          TEST_BROWSER: ${{ inputs.browser }}
+      - name: Set up ChromeDriver (if browser is chrome)
+        if: ${{ inputs.browser == 'chrome' }}
         run: |
-          echo "Executing tests with:"
-          echo "Environment: $TEST_ENV"
-          echo "Tag: $TEST_TAG"
-          echo "Browser: $TEST_BROWSER"
-          mvn test -Dtest.environment=$TEST_ENV -Dtest.tag=$TEST_TAG -Dbrowser=$TEST_BROWSER
+          sudo apt-get update
+          sudo apt-get install -y chromium-chromedriver
+
+      - name: Set up GeckoDriver (if browser is firefox)
+        if: ${{ inputs.browser == 'firefox' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y firefox-geckodriver
+
+      - name: Run Selenium Tests
+        env:
+          ENV: ${{ inputs.env }}
+          BROWSER: ${{ inputs.browser }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          mvn clean test -Denv=$ENV -Dbrowser=$BROWSER -Dcucumber.filter.tags="@$TAG"

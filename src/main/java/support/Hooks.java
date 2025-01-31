@@ -1,18 +1,22 @@
 package support;
 
+import global.DriverManager;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
-import global.DriverManager;
+import org.openqa.selenium.WebDriver;
 
 public class Hooks {
+    private WebDriver driver;
+
     @Before
     public void setup() {
-        DriverManager.getDriver();
+        // Initialize a new WebDriver instance for each scenario
+        driver = DriverManager.getDriver();
     }
 
     @After
     public void teardown() {
-        DriverManager.quitDriver();
-        System.out.println("Browser closed after test execution.");
+        // Quit the WebDriver instance after each scenario
+        DriverManager.quitDriver(driver);
     }
 }

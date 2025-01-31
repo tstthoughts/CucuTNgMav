@@ -39,17 +39,10 @@ jobs:
           java-version: '23'
           distribution: 'temurin'
 
-      - name: Set up ChromeDriver (if browser is chrome)
-        if: ${{ inputs.browser == 'chrome' }}
+      - name: Install Chrome
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-chromedriver
-
-      - name: Set up GeckoDriver (if browser is firefox)
-        if: ${{ inputs.browser == 'firefox' }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y firefox-geckodriver
+          sudo apt-get install -y google-chrome-stable
 
       - name: Run Selenium Tests
         env:

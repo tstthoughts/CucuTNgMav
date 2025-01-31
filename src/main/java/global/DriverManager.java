@@ -8,8 +8,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import java.io.File;
 
 public class DriverManager {
-    // Remove the static WebDriver instance
-    // Each call to getDriver() will create a new instance
     public static WebDriver getDriver() {
         System.out.println("Initializing WebDriver...");
 
@@ -19,9 +17,12 @@ public class DriverManager {
         // Create ChromeOptions to configure ChromeDriver
         ChromeOptions options = new ChromeOptions();
 
-        // Add --user-data-dir with a unique path
+        // Add --user-data-dir with a unique and valid path
         String userDataDir = System.getProperty("java.io.tmpdir") + "chrome-user-data-" + System.currentTimeMillis();
-        new File(userDataDir).mkdirs(); // Create the directory if it doesn't exist
+        File userDataDirFile = new File(userDataDir);
+        if (!userDataDirFile.exists()) {
+            userDataDirFile.mkdirs(); // Create the directory if it doesn't exist
+        }
         options.addArguments("--user-data-dir=" + userDataDir);
 
         // Add other Chrome options for CI/CD environments

@@ -17,7 +17,7 @@ import java.io.IOException;
         glue = {"steps", "support"}, // Path to your step definition files and hooks
         plugin = {"pretty", "html:target/cucumber-reports/cucumber.html", "json:target/cucumber-reports/cucumber.json"},
         monochrome = true, // Ensures console output is readable
-        tags = "@Smoke" // Specify the tag to execute
+        tags = "@datatable" // Specify the tag to execute
 //        tags = "@Smoke and @Regression": Executes scenarios with both tags.
 //        tags = "@Smoke or @Regression": Executes scenarios with either tag.
 //        tags = "not @WIP": Excludes scenarios tagged as @WIP.

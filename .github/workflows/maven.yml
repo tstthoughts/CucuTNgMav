@@ -1,4 +1,4 @@
-name: Selenium Java Automation
+name: Selenium Java Automation (Cucumber + TestNG)
 
 on:
   workflow_dispatch:
@@ -36,7 +36,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          java-version: '23'
+          java-version: '11'
           distribution: 'temurin'
 
       - name: Install Chrome
@@ -44,10 +44,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
 
-      - name: Run Selenium Tests
+      - name: Run Selenium Tests (Cucumber + TestNG)
         env:
           ENV: ${{ inputs.env }}
           BROWSER: ${{ inputs.browser }}
           TAG: ${{ inputs.tag }}
         run: |
-          mvn clean test -Denv=$ENV -Dbrowser=$BROWSER -Dcucumber.filter.tags="@$TAG"
+          mvn clean test -DsuiteXmlFile=testng.xml -Denv=$ENV -Dbrowser=$BROWSER -Dcucumber.filter.tags="@$TAG"
